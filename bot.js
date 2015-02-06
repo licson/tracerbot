@@ -33,10 +33,13 @@ var r = request.defaults({
 	}
 });
 
-process.on(['SIGINT', 'SIGHUP'], function(){
-	fs.writeFileSync(__dirname + '/admins.json', JSON.stringify(su));
-	fs.writeFileSync(__dirname + '/banlist.json', JSON.stringify(banlist));
-	process.exit(0);
+process.stdin.resume();
+process.nextTick(function() {
+	process.on(['SIGINT', 'SIGHUP'], function(){
+		fs.writeFileSync(__dirname + '/admins.json', JSON.stringify(su));
+		fs.writeFileSync(__dirname + '/banlist.json', JSON.stringify(banlist));
+		process.exit(0);
+	});
 });
 
 bot.addListener('error', function(message){
@@ -139,6 +142,17 @@ var target = function(from){
 		return (from != channel ? from : channel);
 	}
 }
+
+var checkAdmin = function(name, cb){
+	bot.whois(name, function(data){
+		if(typeof data.account !== "undefined" && su.indexOf(data.account) > -1){
+			cb(true);
+		}
+		else {
+			cb(false);
+		}
+	});
+};
 
 var commands = {
 	ping: function(to, from, args){
@@ -283,38 +297,42 @@ var commands = {
 			return;
 		}
 
-		if(su.indexOf(to) < 0){
-			bot.say(who, '嗯... 看起來你不夠權限哦！');
-		}
-		else if(args.length > 1) {
-			switch(args[0]){
-				case 'add':
-				if(su.indexOf(args[1]) < 0){
-					su.push(args[1]);
-					bot.say(who, '成功新增 ' + args[1] + ' 為管理員');
-				}
-				else {
-					bot.say(who, args[1] + ' 已經是管理員了！');
-				}
-				break;
+		checkAdmin(to, function(result){
+			if(!result){
+				bot.say(who, '嗯... 看起來你不夠權限哦！');
+				return;
+			}
 
-				case 'delete':
-				su.indexOf(args[1]) > -1 && su.splice(su.indexOf(args[1]), 1);
-				bot.say(who, '成功刪除 管理員' + args[1]);
-				break;
+			if(args.length > 1) {
+				switch(args[0]){
+					case 'add':
+					if(su.indexOf(args[1]) < 0){
+						su.push(args[1]);
+						bot.say(who, '成功新增 ' + args[1] + ' 為管理員');
+					}
+					else {
+						bot.say(who, args[1] + ' 已經是管理員了！');
+					}
+					break;
 
-				default:
+					case 'delete':
+					su.indexOf(args[1]) > -1 && su.splice(su.indexOf(args[1]), 1);
+					bot.say(who, '成功刪除 管理員' + args[1]);
+					break;
+
+					default:
+					bot.say(who, '參數錯誤！');
+					bot.say(who, '-admins <add | delete> [username]');
+					bot.say(who, '管理tracer的管理員。');
+					break;
+				}
+			}
+			else {
 				bot.say(who, '參數錯誤！');
 				bot.say(who, '-admins <add | delete> [username]');
 				bot.say(who, '管理tracer的管理員。');
-				break;
 			}
-		}
-		else {
-			bot.say(who, '參數錯誤！');
-			bot.say(who, '-admins <add | delete> [username]');
-			bot.say(who, '管理tracer的管理員。');
-		}
+		});
 	},
 	curl: function(to, from, args){
 		var who = target(from);
@@ -351,80 +369,86 @@ var commands = {
 	banlist: function(to, from, args){
 		var who = target(from);
 
-		if(su.indexOf(to) < 0){
-			bot.say(who, '嗯... 看起來你不夠權限哦！');
-		}
-		else if(args.length >= 3){
-			switch(args[0]){
-				case 'add':
-				
-				if(Array.isArray(banlist[args[1]])){
-					banlist[args[1]].push(args[2]);
+		checkAdmin(to, function(result){
+			if(!result){
+				bot.say(who, '嗯... 看起來你不夠權限哦！');
+				return;
+			}
+
+			if(args.length >= 3){
+				switch(args[0]){
+					case 'add':
+					
+					if(Array.isArray(banlist[args[1]])){
+						banlist[args[1]].push(args[2]);
+					}
+					else {
+						banlist[args[1]] = [];
+						banlist[args[1]].push(args[2]);
+					}
+					bot.say(who, '已新增 ' + to + ' 到黑名單！');
+
+					break;
+
+					case 'delete':
+					banlist[args[1]].indexOf(args[2]) > -1 && banlist[args[1]].splice(banlist[args[1]].indexOf(args[2]), 1);
+
+					bot.say(who, '已把 ' + args[2] + ' 從黑名單刪除！');
+					break;
+
+					default:
+					bot.say(who, '參數錯誤！');
+					bot.say(who, '-banlist <add | delete> [command] [username]');
+					bot.say(who, '管理tracer的黑名單。');
+					break;
 				}
-				else {
-					banlist[args[1]] = [];
-					banlist[args[1]].push(args[2]);
-				}
-				bot.say(who, '已新增 ' + to + ' 到黑名單！');
-
-				break;
-
-				case 'delete':
-				banlist[args[1]].indexOf(args[2]) > -1 && banlist[args[1]].splice(banlist[args[1]].indexOf(args[2]), 1);
-
-				bot.say(who, '已把 ' + args[2] + ' 從黑名單刪除！');
-				break;
-
-				default:
+			}
+			else {
 				bot.say(who, '參數錯誤！');
 				bot.say(who, '-banlist <add | delete> [command] [username]');
 				bot.say(who, '管理tracer的黑名單。');
-				break;
 			}
-		}
-		else {
-			bot.say(who, '參數錯誤！');
-			bot.say(who, '-banlist <add | delete> [command] [username]');
-			bot.say(who, '管理tracer的黑名單。');
-		}
+		});
 	},
 	gravy: function(to, from, args){
 		var who = target(from);
 		
-		if(su.indexOf(to) < 0){
-			bot.say(who, '嗯... 看起來你不夠權限哦！');
-			return;
-		}
-		
-		if(attacking === true && !(args.length == 1 && args[0] == 'stop')){
-			bot.say(who, 'tracer只能專注一次攻擊一個目標！');
-			return;
-		}
-		
-		if(args.length == 1 && args[0] == 'stop'){
-			attack_modules.minecraft.kill('SIGINT');
-			return;
-		}
-		
-		if(args.length >= 2){
-			attack_modules.minecraft = fork(__dirname + '/minecraft.js');
-			var minecraft = attack_modules.minecraft;
-			attacking = true;
-	
-			minecraft.on('exit', function(){
-				attacking = false;
-				bot.say(who, '已停止攻擊 ' + args[0] + '！');
-			});
+		checkAdmin(to, function(result){
+			if(!result){
+				bot.say(who, '嗯... 看起來你不夠權限哦！');
+				return;
+			}
 			
-			minecraft.send({ host: args[0], port: args[1] });
-			bot.say(who, '開始攻擊 ' + args[0] + '！');
-		}
-		else {
-			bot.say(who, '參數錯誤！');
-			bot.say(who, '-gravy [host] [port]');
-			bot.say(who, '把目標Minecraft伺服器徹底毀滅！支援版本 1.7.10 的伺服器。');
-			bot.say(who, '使用 -gravy stop 以停止攻擊。');
-		}
+			if(attacking === true && !(args.length == 1 && args[0] == 'stop')){
+				bot.say(who, 'tracer只能專注一次攻擊一個目標！');
+				return;
+			}
+			
+			if(args.length == 1 && args[0] == 'stop'){
+				attack_modules.minecraft.kill('SIGINT');
+				return;
+			}
+			
+			if(args.length >= 2){
+				attack_modules.minecraft = fork(__dirname + '/minecraft.js');
+				var minecraft = attack_modules.minecraft;
+				attacking = true;
+		
+				minecraft.on('exit', function(){
+					attacking = false;
+					bot.say(who, '已停止攻擊 ' + args[0] + '！');
+				});
+				
+				minecraft.send({ host: args[0], port: args[1] });
+				bot.say(who, '開始攻擊 ' + args[0] + '！');
+			}
+			else {
+				bot.say(who, '參數錯誤！');
+				bot.say(who, '-gravy [host] [port]');
+				bot.say(who, '把目標Minecraft伺服器徹底毀滅！支援版本 1.7.10 的伺服器。');
+				bot.say(who, '使用 -gravy stop 以停止攻擊。');
+			}
+		});
 	}
 };
 
