@@ -10,11 +10,14 @@ var IP_RANGES = /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.
 var HOST_RANGES = /^(.*)(\/([0-9]){0,3})$/;
 
 var channel = '#ysitd';
+
 var su = JSON.parse(fs.readFileSync(__dirname + '/admins.json', 'utf8'));
 var banlist = JSON.parse(fs.readFileSync(__dirname + '/banlist.json', 'utf8'));
+
+var start = Date.now();
 var rate_limiting = { nmap:[], curl:[] };
-var attacking = false;
 var attack_modules = {};
+var attacking = false;
 var forward = false;
 
 var bot = new irc.Client('asimov.freenode.net', 'tracerbot', {
@@ -35,10 +38,9 @@ var r = request.defaults({
 
 process.stdin.resume();
 process.nextTick(function() {
-	process.on(['SIGINT', 'SIGHUP'], function(){
+	process.on('exit', function(){
 		fs.writeFileSync(__dirname + '/admins.json', JSON.stringify(su));
 		fs.writeFileSync(__dirname + '/banlist.json', JSON.stringify(banlist));
-		process.exit(0);
 	});
 });
 
@@ -449,6 +451,18 @@ var commands = {
 				bot.say(who, '使用 -gravy stop 以停止攻擊。');
 			}
 		});
+	},
+	uptime: function(to, from, args){
+		var who = target(from);
+		var timeDiff = (Date.now() - start) / 1000;
+
+		// Format time
+		var sec = timeDiff % 60;
+		var min = Math.floor(timeDiff / 60 % 60);
+		var hour = Math.floor(timeDiff / 3600 % 60);
+		var day = Math.floor(timeDiff / 86400 % 60);
+
+		bot.say(who, 'tracer已經運作了 ' + day + ' 天 ' + hour + ' 小時 ' + min + ' 分鐘 ' + sec + ' 秒。');
 	}
 };
 
