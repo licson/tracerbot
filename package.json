@@ -1,25 +1,30 @@
 {
-	"name": "tracer",
-	"version": "0.1.0",
-	"author": "Licson Lee",
-	"description": "A special IRC bot for the needy.",
-	"license": "MIT",
-	"main": "bot.js",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/licson0729/tracerbot"
-	},
-	"keywords": [
-		"tracerbot",
-		"tracer",
-		"IRC",
-		"bot",
-		"Gravy"
-	],
-	"dependencies": {
-		"minecraft-protocol": "~0.12.3",
-		"irc": "*",
-		"request": "*",
-		"cheerio": "*"
-	}
+  "name": "tracerbot",
+  "version": "0.2.0",
+  "author": "Licson Lee",
+  "description": "A special IRC bot for the needy.",
+  "license": "MIT",
+  "main": "bot.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/licson0729/tracerbot"
+  },
+  "keywords": [
+    "tracerbot",
+    "tracer",
+    "IRC",
+    "bot",
+    "Gravy"
+  ],
+  "dependencies": {
+    "minecraft-protocol": "~0.12.3",
+    "irc": "~0.3.11"
+  },
+  "bugs": {
+    "url": "https://github.com/licson0729/tracerbot/issues"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }

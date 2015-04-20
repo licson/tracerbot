@@ -75,7 +75,7 @@ runner = function(host, port, x, y, delay, username) {
 
 process.on('message', function(msg) {
   var all, angle, j, x, y, _results;
-  all = 50;
+  all = msg.players;
   j = 0;
   _results = [];
   while (j < all) {
