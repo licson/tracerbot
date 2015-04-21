@@ -168,10 +168,7 @@ Bot.prototype.processCommands = function(to, from, message){
 		}
 	}
 
-	if(message.toLowerCase() == 'ping'){
-		this.say(to, 'pong');
-	}
-	else if(command.toLowerCase() == 'help'){
+	if(command.toLowerCase() == 'help'){
 		if(args[0]){
 			this.generateHelpMessage(to, args[0]);
 		}
@@ -215,6 +212,11 @@ Bot.prototype.connect = function(){
 	this.irc.addListener('message', function(from, to, message){
 		console.log('%s => %s: %s', from, to, message);
 		
+		if(message.toLowerCase() == 'ping' && from.toLowerCase().indexOf('bot') < 0){
+			self.say(to, 'pong');
+			return;
+		}
+
 		if(to == self.opts.botname || self.opts.channels.indexOf(to) > -1){
 			if(message.substr(0, 1) == '-'){
 				var target = (to == self.opts.botname) ? from : to;
