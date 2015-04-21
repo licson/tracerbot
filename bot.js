@@ -154,8 +154,8 @@ Bot.prototype.checkAdmin = function(name, cb){
 };
 
 Bot.prototype.processCommands = function(to, from, message){
-	message = message.substr(1);
-	var parsed = this.parseCommandArguments(message);
+	cmd = message.substr(1);
+	var parsed = this.parseCommandArguments(cmd);
 	var command = parsed.shift();
 	var args = parsed;
 
@@ -168,7 +168,10 @@ Bot.prototype.processCommands = function(to, from, message){
 		}
 	}
 
-	if(command.toLowerCase() == 'help'){
+	if(message.toLowerCase() == 'ping'){
+		this.say(to, 'pong');
+	}
+	else if(command.toLowerCase() == 'help'){
 		if(args[0]){
 			this.generateHelpMessage(to, args[0]);
 		}
