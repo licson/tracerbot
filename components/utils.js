@@ -5,8 +5,8 @@ module.exports = [
 		name: 'admin',
 		desc: 'Performs administrative operations.',
 		args: [
-			{ name: 'action', required: true },
-			{ name: 'ban|unban|deop|op', required: false }
+			{ name: 'ban|unban|deop|op', required: true },
+			{ name: 'options', required: false }
 		],
 		def: function(args, target, from){
 			this.checkAdmin(from, function(admin){
