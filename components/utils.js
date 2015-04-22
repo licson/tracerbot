@@ -6,7 +6,7 @@ module.exports = [
 		desc: 'Performs administrative operations.',
 		args: [
 			{ name: 'action', required: true },
-			{ name: 'options', required: false }
+			{ name: 'ban|unban|deop|op', required: false }
 		],
 		def: function(args, target, from){
 			this.checkAdmin(from, function(admin){
@@ -64,6 +64,10 @@ module.exports = [
 					}
 
 					this.say(target, 'Unbanned ' + user + ' from executing ' + cmd + '!');
+					break;
+
+					default:
+					this.say(target, 'I don\'t understand what you\'re doing.');
 					break;
 				}
 			});
