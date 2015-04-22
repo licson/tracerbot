@@ -5,7 +5,8 @@ var routers = {
 	tpe: '218.189.23.146',
 	lon: '185.25.247.226',
 	lax: '218.188.105.2',
-	phx: '67.17.81.28'
+	phx: '67.17.81.28',
+	fra: '213.200.64.94'
 };
 
 var locations = {
@@ -13,7 +14,8 @@ var locations = {
 	tpe: 'Taipei, TW',
 	lon: 'London, UK',
 	lax: 'Los Angeles, CA, US',
-	phx: 'Phoenix, AZ, US'
+	phx: 'Phoenix, AZ, US',
+	fra: 'Frankfurt, GE'
 };
 
 var connect = function(router, cmd, callback){
