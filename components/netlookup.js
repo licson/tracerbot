@@ -10,7 +10,7 @@ setInterval(function(){
 
 module.exports = [
 	{
-		name: 'iplookup',
+		name: 'ipinfo',
 		desc: 'Lookup information of a single IP address.',
 		args: [
 			{ name: 'ip', required: true }
@@ -51,9 +51,11 @@ module.exports = [
 			var asnum = args[0].replace(/as\s*/i, '');
 
 			if(asnum in cache){
-				var result = cache[asnum];
-				this.say(target, result);
-				return;
+				if('basic' in cache[asnum]){
+					var result = cache[asnum]['basic'];
+					this.say(target, result);
+					return;
+				}
 			}
 			else {
 				var self = this;
@@ -67,11 +69,67 @@ module.exports = [
 						var $ = cheerio.load(body);
 
 						// Basic AS info
-						cache[asnum] = '';
-						cache[asnum] += $('h1').text() + '\r\n';
-						cache[asnum] += $('.asinfotext').text().replace(/[\t]{1,}/g, '');
+						cache[asnum] = {};
+						cache[asnum]['basic'] = '';
+						cache[asnum]['basic'] += $('h1').text() + '\r\n';
+						cache[asnum]['basic'] += $('.asinfotext').text().replace(/[\t]{1,}/g, '');
 
-						self.say(target, cache[asnum]);
+						self.say(target, cache[asnum]['basic']);
+					}
+				});
+			}
+		}
+	}, 
+	{
+		name: 'aspeer',
+		desc: 'Get a list of connected networks of an Autonomous System (network).',
+		args: [
+			{ name: 'asnum', required: true }
+		],
+		def: function(args, target){
+			var asnum = args[0].replace(/as\s*/i, '');
+
+			if(asnum in cache){
+				if('peers' in cache[asnum]){
+					var result = cache[asnum]['peers'];
+					this.say(target, result);
+					return;
+				}
+			}
+			else {
+				var self = this;
+				request({
+					url: 'http://bgp.he.net/AS' + asnum,
+					headers: {
+						'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.18 Safari/537.36'
+					}
+				}, function(e, res, body){
+					if(!e && res.statusCode == 200){
+						var $ = cheerio.load(body);
+						var exceed = false;
+						var str = '';
+
+						$('#table_peers4 tbody tr').each(function(i){
+							if(i >= self.opts.aspeer.numresult){
+								exceed = true;
+								return;
+							}
+
+							var as = $(this).find('td').eq(3).text();
+							var name = $(this).find('td').eq(1).text();
+							str += (as + ' ' + name + '\r\n');
+						});
+
+						// AS Peers
+						cache[asnum] = {};
+						cache[asnum]['peers'] = $('h1').text() + ' IPv4 Peers list:\r\n';
+						cache[asnum]['peers'] += str;
+
+						if(exceed){
+							cache[asnum]['peers'] += "\r\n(" + ($('#table_peers4 tbody tr').length - self.opts.aspeer.numresult) + " more records)";
+						}
+
+						self.say(target, cache[asnum]['peers']);
 					}
 				});
 			}

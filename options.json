@@ -22,5 +22,8 @@
 	},
 	"repeat": {
 		"maxnum": 100
+	},
+	"aspeer": {
+		"numresult": 10
 	}
 }
