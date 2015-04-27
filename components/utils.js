@@ -141,5 +141,27 @@ module.exports = [
 
 			this.say(target, 'Uptime: ' + day + ':' + hour + ':' + min + ':' + sec);
 		}
+	},
+	{
+		name: 'restart',
+		desc: 'Restarts the bot without exiting the program.',
+		args: [],
+		def: function(args, target, from){
+			this.checkAdmin(from, function(admin){
+				var self = this;
+
+				if(!admin){
+					this.say(target, 'Only authorized person can perform this action.');
+					return;
+				}
+
+				this.say(target, 'The bot will soon restart.');
+				setTimeout(function(){
+					self.irc.disconnect('Restarting...', function(){
+						global.ircBot = new global.Bot();
+					});
+				}, 500);
+			});
+		}
 	}
 ];

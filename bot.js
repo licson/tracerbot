@@ -239,4 +239,5 @@ Bot.prototype.connect = function(){
 	});
 };
 
+global.Bot = Bot;
 global.ircBot = new Bot();
