@@ -6,7 +6,8 @@ var routers = {
 	lon: '185.25.247.226',
 	lax: '218.188.105.2',
 	phx: '67.17.81.28',
-	fra: '213.200.64.94'
+	fra: '213.200.64.94',
+	ams: '67.17.81.187'
 };
 
 var locations = {
@@ -15,7 +16,8 @@ var locations = {
 	lon: 'London, UK',
 	lax: 'Los Angeles, CA, US',
 	phx: 'Phoenix, AZ, US',
-	fra: 'Frankfurt, GE'
+	fra: 'Frankfurt, GE',
+	ams: 'Amsterdam, NL'
 };
 
 var connect = function(router, cmd, callback){
