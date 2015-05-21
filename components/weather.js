@@ -43,7 +43,7 @@ module.exports = [
 					output += '\nCurrent temperature is ' + (info.main.temp - 273.15) + '°C, with humidity of ' + info.main.humidity + '%,\n';
 					output += 'Today is ' + cloudiness + ' and ' + windyness;
 
-					self.say(output, target);
+					self.say(target, output);
 				}
 			});
 		}
