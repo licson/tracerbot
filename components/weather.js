@@ -40,7 +40,7 @@ module.exports = [
 
 					// Construct the message
 					output += 'Current weather in '  + info.name + ', ' + info.sys.country + ': ' + info.weather[0].description;
-					output += '\nCurrent temperature is ' + (info.main.temp - 273.15) + '°C, with humidity of ' + info.main.humidity + '%,\n';
+					output += '\nCurrent temperature is ' + Math.round(info.main.temp - 273.15) + '°C, with humidity of ' + info.main.humidity + '%,\n';
 					output += 'Today is ' + cloudiness + ' and ' + windyness;
 
 					self.say(target, output);
