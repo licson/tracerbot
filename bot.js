@@ -21,9 +21,9 @@ Bot.prototype.load = function(){
 };
 
 Bot.prototype.loadOptions = function(){
-	this.opts = JSON.parse(fs.readFileSync(__dirname + '/options.json', 'utf8'));
-	this.admins = JSON.parse(fs.readFileSync(__dirname + '/admins.json', 'utf8'));
-	this.banlist = JSON.parse(fs.readFileSync(__dirname + '/banlist.json', 'utf8'));
+	this.opts = JSON.parse(fs.readFileSync(__dirname + '/config/options.json', 'utf8'));
+	this.admins = JSON.parse(fs.readFileSync(__dirname + '/config/admins.json', 'utf8'));
+	this.banlist = JSON.parse(fs.readFileSync(__dirname + '/config/banlist.json', 'utf8'));
 };
 
 Bot.prototype.loadComponents = function(){
