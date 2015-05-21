@@ -1,5 +1,5 @@
 {
-	"botname": "tracerbot",
+	"botname": "tracer",
 	"channels": [ "#ysitd", "#sitcon" ],
 	"irc": {
 		"host": "irc.freenode.net",
@@ -25,8 +25,5 @@
 	},
 	"aspeer": {
 		"numresult": 10
-	},
-	"weather": {
-		"language": "en"
 	}
 }
