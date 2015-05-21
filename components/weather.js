@@ -18,6 +18,11 @@ module.exports = [
 					var cloudiness = 'cloudy';
 					var windyness = 'no wind';
 
+					if(info.cod != 200){
+						self.say(target, info.message);
+						return;
+					}
+
 					if(info.clouds.all < 80){
 						cloudiness = 'slightly cloudy';
 					}
