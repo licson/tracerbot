@@ -92,8 +92,8 @@ module.exports = [
 
 					info.list.forEach(function(forecast){
 						var time = moment(forecast.dt * 1000);
-						var tempMin = forecast.temp.min;
-						var tempMax = forecast.temp.max;
+						var tempMin = Math.round(forecast.temp.min - 273.15);
+						var tempMax = Math.round(forecast.temp.max - 273.15);
 						var desc = forecast.weather[0].description;
 						var windyness = getWindDescription(forecast.speed);
 						var cloudiness = getCloudiness(forecast.clouds);
