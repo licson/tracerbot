@@ -1,4 +1,37 @@
 var request = require('request');
+var moment = require('moment');
+
+var getCloudiness = function(p){
+	var cloudiness = 'cloudy';
+
+	if(p < 80){
+		cloudiness = 'slightly cloudy';
+	}
+
+	if(p < 30){
+		cloudiness = 'clear';
+	}
+
+	return cloudiness;
+};
+
+var getWindDescription = function(p){
+	var windyness = 'no wind';
+
+	if(p > 30){
+		windyness = 'have typhoons';
+	}
+
+	if(p > 15){
+		windyness = 'have strong wind';
+	}
+
+	if(p > 5){
+		windyness = 'windy';
+	}
+
+	return windyness;
+};
 
 module.exports = [
 	{
@@ -15,32 +48,12 @@ module.exports = [
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
 					var output = '';
-					var cloudiness = 'cloudy';
-					var windyness = 'no wind';
+					var cloudiness = getCloudiness(info.clouds.all);
+					var windyness = getWindDescription(info.wind.speed);
 
 					if(info.cod != 200){
 						self.say(target, info.message);
 						return;
-					}
-
-					if(info.clouds.all < 80){
-						cloudiness = 'slightly cloudy';
-					}
-
-					if(info.clouds.all < 30){
-						cloudiness = 'clear';
-					}
-
-					if(info.wind.speed > 30){
-						windyness = 'have typhoons';
-					}
-
-					if(info.wind.speed > 15){
-						windyness = 'have strong wind';
-					}
-
-					if(info.wind.speed > 5){
-						windyness = 'windy';
 					}
 
 					// Construct the message
@@ -49,6 +62,49 @@ module.exports = [
 					output += 'Today is ' + cloudiness + ' and ' + windyness;
 
 					self.say(target, output);
+				}
+				else {
+					self.say(target, 'Error: Cannot get weather data at this moment.');
+				}
+			});
+		}
+	},
+	{
+		name: 'forecast',
+		desc: 'Provides a 7-day weather forecast of a city.',
+		args: [
+			{ name: 'city', required: true }
+		],
+		def: function(args, target){
+			var self = this;
+			var city = args[0].replace(/(&|\?|=)/g, '');
+
+			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city + '&lang=' + this.opts.weather.language, function(e, res, body){
+				if(!e && res.statusCode == 200){
+					var info = JSON.parse(body);
+
+					if(info.cod != 200){
+						self.say(target, info.message);
+						return;
+					}
+
+					self.say(target, 'Weather forecast for ' + info.city.name + ', ' + info.city.country + ':');
+
+					info.list.forEach(function(forecast){
+						var time = moment(forecast.dt * 1000);
+						var tempMin = forecast.temp.min;
+						var tempMax = forecast.temp.max;
+						var desc = forecast.weather[0].description;
+						var windyness = getWindDescription(forecast.speed);
+						var cloudiness = getCloudiness(forecast.clouds);
+						var output = time.format('ddd Do, MMM') + ' - ' + desc + '; ';
+						output += 'Temperature: ' + tempMin + ' - ' + tempMax + '°C, that day is ' + cloudiness + ' and ' + windyness;
+
+						self.say(target, output);
+					});
+				}
+				else {
+					self.say(target, 'Error: Cannot get forecast data at this moment.');
 				}
 			});
 		}
