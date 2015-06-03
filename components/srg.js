@@ -11,10 +11,10 @@ module.exports = {
 	],
 	def: function(args, target, from){
 		var self = this;
-		var dl = args[0];
-		var ul = args[1];
-		var ping = args[2];
-		var server = args[3] || -1;
+		var dl = parseInt(args[0]);
+		var ul = parseInt(args[1]);
+		var ping = parseInt(args[2]);
+		var server = parseInt(args[3]) || -1;
 
 		srg.getResult({
 			download: dl,
