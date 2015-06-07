@@ -31,12 +31,16 @@ Bot.prototype.loadComponents = function(){
 	var list = fs.readdirSync(__dirname + '/components/');
 	list.forEach(function(component){
 		var comp = require(__dirname + '/components/' + component);
+		console.log('Loaded component %s', component);
+
 		if(Array.isArray(comp)){
 			comp.forEach(function(subs){
+				console.log('Loaded command definition %s from component %s', subs.name, component);
 				self.components[subs.name] = subs;
 			});
 		}
 		else {
+			console.log('Loaded command definition %s from component %s', comp.name, component);
 			self.components[comp.name] = comp;
 		}
 	});
