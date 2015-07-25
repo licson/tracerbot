@@ -118,6 +118,11 @@ module.exports = [
 			var num = parseInt(args[1]);
 			var to = args[2];
 
+			if(to == this.opts.irc.botname){
+				this.say(target, "You can't do this.");
+				return;
+			}
+
 			if(num > this.opts.repeat.maxnum){
 				num = this.opts.repeat.maxnum;
 			}
