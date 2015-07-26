@@ -1,8 +1,8 @@
 {
-	"botname": "tracerbot",
+	"botname": "tracer",
 	"channels": [ "#ysitd", "#sitcon" ],
 	"irc": {
-		"host": "irc.freenode.net",
+		"host": "weber.freenode.net",
 		"port": 6697,
 		"secure": true,
 		"username": "trace",
@@ -21,7 +21,7 @@
 		"port": 25565
 	},
 	"repeat": {
-		"maxnum": 100
+		"maxnum": 20
 	},
 	"aspeer": {
 		"numresult": 10

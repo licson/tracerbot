@@ -165,6 +165,13 @@ Bot.prototype.processCommands = function(to, from, message){
 
 	console.log('Received command: cmd=%s, args=%s', command, args);
 
+	if('all' in this.banlist){
+		if(this.banlist.all.indexOf(from) > -1){
+			this.say(to, 'You are banned from using the command.');
+			return;
+		}
+	}
+
 	if(command in this.banlist){
 		if(this.banlist[command].indexOf(from) > -1){
 			this.say(to, 'You are banned from using the command.');
