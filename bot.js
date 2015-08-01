@@ -167,7 +167,6 @@ Bot.prototype.processCommands = function(to, from, message){
 
 	if('all' in this.banlist){
 		if(this.banlist.all.indexOf(from) > -1){
-			this.say(to, 'You are banned from using the command.');
 			return;
 		}
 	}

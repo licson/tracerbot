@@ -2,7 +2,7 @@
 	"botname": "tracer",
 	"channels": [ "#ysitd", "#sitcon" ],
 	"irc": {
-		"host": "weber.freenode.net",
+		"host": "banks.freenode.net",
 		"port": 6697,
 		"secure": true,
 		"username": "trace",
