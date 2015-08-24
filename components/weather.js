@@ -46,15 +46,15 @@ module.exports = [
 
 			request('http://api.openweathermap.org/data/2.5/weather?q=' + city, function(e, res, body){
 				if(!e && res.statusCode == 200){
-					var info = JSON.parse(body);
-					var output = '';
-					var cloudiness = getCloudiness(info.clouds.all);
-					var windyness = getWindDescription(info.wind.speed);
-
 					if(parseInt(info.cod) != 200){
 						self.say(target, info.message);
 						return;
 					}
+					
+					var info = JSON.parse(body);
+					var output = '';
+					var cloudiness = getCloudiness(info.clouds.all);
+					var windyness = getWindDescription(info.wind.speed);
 
 					// Construct the message
 					output += 'Current weather in '  + info.name + ', ' + info.sys.country + ': ' + info.weather[0].description;
