@@ -51,7 +51,7 @@ module.exports = [
 					var cloudiness = getCloudiness(info.clouds.all);
 					var windyness = getWindDescription(info.wind.speed);
 
-					if(info.cod != 200){
+					if(parseInt(info.cod) != 200){
 						self.say(target, info.message);
 						return;
 					}
@@ -83,7 +83,7 @@ module.exports = [
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
 
-					if(info.cod != 200){
+					if(parseInt(info.cod) != 200){
 						self.say(target, info.message);
 						return;
 					}
