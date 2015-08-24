@@ -46,12 +46,13 @@ module.exports = [
 
 			request('http://api.openweathermap.org/data/2.5/weather?q=' + city, function(e, res, body){
 				if(!e && res.statusCode == 200){
+					var info = JSON.parse(body);
+										
 					if(parseInt(info.cod) != 200){
 						self.say(target, info.message);
 						return;
 					}
 					
-					var info = JSON.parse(body);
 					var output = '';
 					var cloudiness = getCloudiness(info.clouds.all);
 					var windyness = getWindDescription(info.wind.speed);
