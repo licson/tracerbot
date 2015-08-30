@@ -4,7 +4,7 @@ mc = require('minecraft-protocol');
 
 runner = function(host, port, x, y, delay, username) {
   if (username == null) {
-    username = (Math.floor(Math.random() * (1 << 30))).toString(16);
+    username = (Math.floor(Math.random() * 0x7fffffffffffffff)).toString(36);
   }
   return setTimeout(function() {
     var client, id, reset;

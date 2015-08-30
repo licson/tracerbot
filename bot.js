@@ -6,6 +6,7 @@ var Bot = function(){
 	this.banlist = {};
 	this.admins = [];
 	this.opts = {};
+	this.regexCache = {};
 
 	this.irc = null;
 	this.startTime = Date.now();
@@ -157,6 +158,39 @@ Bot.prototype.checkAdmin = function(name, cb){
 	});
 };
 
+Bot.prototype.checkBanList = function(user, cmd){
+	if(Array.isArray(this.banlist[cmd])){
+		if(this.banlist[cmd].length === 0){
+			return true;
+		}
+		
+		var result = false;
+		
+		if(Array.isArray(this.regexCache[cmd])){
+			this.regexCache[cmd].forEach(function(rule){
+				result = result && rule.test(user);
+			});
+		}
+		else {
+			var self = this;
+			this.regexCache[cmd] = [];
+			
+			this.banlist[cmd].forEach(function(rule){
+				self.regexCache[cmd].push(new RegExp(rule, "gi"));
+			});
+			
+			this.regexCache[cmd].forEach(function(rule){
+				result = result && rule.test(user);
+			});
+		}
+		
+		return result;
+	}
+	else {
+		return true;
+	}
+}
+
 Bot.prototype.processCommands = function(to, from, message){
 	cmd = message.substr(1);
 	var parsed = this.parseCommandArguments(cmd);
@@ -165,17 +199,13 @@ Bot.prototype.processCommands = function(to, from, message){
 
 	console.log('Received command: cmd=%s, args=%s', command, args);
 
-	if('all' in this.banlist){
-		if(this.banlist.all.indexOf(from) > -1){
-			return;
-		}
+	if(!this.checkBanList(from, 'all')){
+		return;
 	}
 
-	if(command in this.banlist){
-		if(this.banlist[command].indexOf(from) > -1){
-			this.say(to, 'You are banned from using the command.');
-			return;
-		}
+	if(!this.checkBanList(from, command)){
+		this.say(to, 'You are banned from using the command.');
+		return;
 	}
 
 	if(command.toLowerCase() == 'help'){

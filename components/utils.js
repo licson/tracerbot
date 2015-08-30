@@ -61,6 +61,7 @@ module.exports = [
 
 					if(this.banlist[cmd].indexOf(user) > -1){
 						this.banlist[cmd].splice(this.banlist[cmd].indexOf(user), 1);
+						this.regexCache[cmd] = null;
 					}
 
 					this.say(target, 'Unbanned ' + user + ' from executing ' + cmd + '!');
