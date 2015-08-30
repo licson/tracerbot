@@ -32,7 +32,7 @@ module.exports = {
 				var port = args[1] || this.opts.gravy.port;
 				var players = args[2] || this.opts.gravy.players;
 				var id = Math.floor(Math.random() * 0xffffffff).toString(16);
-				var proc = fork(__dirname + '/../gravy_child.js');
+				var proc = fork(__dirname + '/../modules/gravy_child.js');
 
 				proc.on('exit', function(){
 					delete jobs[id];

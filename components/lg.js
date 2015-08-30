@@ -1,5 +1,5 @@
 var IP_ADDRESS = /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/;
-var Telnet = require('../telnet');
+var Telnet = require('../modules/telnet');
 var routers = {
 	hkg: '218.188.104.6',
 	tpe: '218.189.23.146',

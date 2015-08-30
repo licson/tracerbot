@@ -1,4 +1,4 @@
-var srg = require('../srg');
+var srg = require('../modules/srg');
 
 module.exports = {
 	name: 'srg',
