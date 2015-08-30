@@ -53,9 +53,9 @@ Bot.prototype.setupEventHandlers = function(){
 	process.stdin.resume();
 	process.nextTick(function() {
 		process.on('exit', function(){
-			fs.writeFileSync(__dirname + '/config/admins.json', JSON.stringify(self.admins));
-			fs.writeFileSync(__dirname + '/config/banlist.json', JSON.stringify(self.banlist));
-			// fs.writeFileSync(__dirname + '/options.json', JSON.stringify(self.opts));
+			fs.writeFileSync(__dirname + '/config/admins.json', JSON.stringify(self.admins, null, 4));
+			fs.writeFileSync(__dirname + '/config/banlist.json', JSON.stringify(self.banlist, null, 4));
+			fs.writeFileSync(__dirname + '/options.json', JSON.stringify(self.opts, null, 4));
 		});
 		
 		process.on('SIGINT', function(){
