@@ -226,10 +226,6 @@ Bot.prototype.processCommands = function(to, from, message){
 			this.generateHelpMessage(to, command);
 		}
 	}
-	else {
-		this.say(to, 'No such command: ' + command);
-		this.say(to, 'Use -help to get a list of commands, or -help <command> for usage.');
-	}
 };
 
 Bot.prototype.connect = function(){
