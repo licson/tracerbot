@@ -180,7 +180,7 @@ Bot.prototype.checkBanList = function(user, cmd){
 			});
 			
 			this.regexCache[cmd].forEach(function(rule){
-				result = result && rule.test(user);
+				if(rule.test(user)) result = result && false; 
 			});
 		}
 		
