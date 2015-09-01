@@ -164,11 +164,11 @@ Bot.prototype.checkBanList = function(user, cmd){
 			return true;
 		}
 		
-		var result = false;
+		var result = true;
 		
 		if(Array.isArray(this.regexCache[cmd])){
 			this.regexCache[cmd].forEach(function(rule){
-				result = result && rule.test(user);
+				if(rule.test(user)) result = result && false; 
 			});
 		}
 		else {
