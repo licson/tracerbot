@@ -1,32 +1,39 @@
 {
-	"botname": "tracer",
-	"channels": [ "#ysitd", "#sitcon" ],
-	"irc": {
-		"host": "banks.freenode.net",
-		"port": 6697,
-		"secure": true,
-		"username": "trace",
-		"realname": "Tracer by Licson"
-	},
-	"nmap": {
-		"rangescan": false,
-		"privileged": false,
-		"ratelimit_interval": 300
-	},
-	"curl": {
-		"ratelimit_interval": 60
-	},
-	"gravy": {
-		"players": 25,
-		"port": 25565
-	},
-	"repeat": {
-		"maxnum": 20
-	},
-	"aspeer": {
-		"numresult": 10
-	},
-	"weather": {
-		"language": "en"
-	}
+    "botname": "tracer",
+    "channels": [
+        "#ysitd",
+        "#sitcon"
+    ],
+    "irc": {
+        "host": "banks.freenode.net",
+        "port": 6697,
+        "secure": true,
+        "username": "trace",
+        "realname": "Tracer by Licson"
+    },
+    "telegram": {
+        "key": "",
+        "botname": "tracerbot"
+    },
+    "nmap": {
+        "rangescan": false,
+        "privileged": false,
+        "ratelimit_interval": 300
+    },
+    "curl": {
+        "ratelimit_interval": 60
+    },
+    "gravy": {
+        "players": 25,
+        "port": 25565
+    },
+    "repeat": {
+        "maxnum": 20
+    },
+    "aspeer": {
+        "numresult": 10
+    },
+    "weather": {
+        "language": "en"
+    }
 }
