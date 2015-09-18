@@ -25,7 +25,9 @@ module.exports = {
 			noRandomize: true
 		}, function(result){
 			if(self.tg){
-				self.tg.sendPhoto(target, request(result.resultImage));
+				setTimeout(function(){
+					self.tg.sendPhoto(target, request(result.resultImage));
+				}, 1000);
 			}
 			else {
 				self.say(target, from + ': ' + result.resultImage);	
