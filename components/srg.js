@@ -1,4 +1,6 @@
 var request = require('request');
+var fs = require('fs')
+var tempDir = require('os').tmpdir();
 var srg = require('../modules/srg');
 
 module.exports = {
@@ -25,9 +27,12 @@ module.exports = {
 			noRandomize: true
 		}, function(result){
 			if(self.tg){
-				setTimeout(function(){
-					self.tg.sendPhoto(target, request(result.resultImage));
-				}, 1000);
+				var x = fs.createWriteStream(tempDir + '/speedtest.png');
+				x.on('finish', function(){
+					self.tg.sendPhoto(target, tempDir + '/speedtest.png');
+				});
+				
+				request(result.resultImage).pipe(x);
 			}
 			else {
 				self.say(target, from + ': ' + result.resultImage);	
