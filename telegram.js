@@ -227,8 +227,9 @@ Bot.prototype.processCommands = function(to, from, message){
 		}
 	}
 	else {
-		this.say(to, 'No such command: ' + command);
-		this.say(to, 'Use /help to get a list of commands, or /help <command> for usage.');
+		// Ignore errors on telegram
+		/* this.say(to, 'No such command: ' + command);
+		this.say(to, 'Use /help to get a list of commands, or /help <command> for usage.'); */
 	}
 };
 
