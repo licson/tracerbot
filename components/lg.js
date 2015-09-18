@@ -110,10 +110,14 @@ module.exports = [
 		desc: 'Shows information about the monitoring routers.',
 		args: [],
 		def: function(args, target){
+			var str = '';
+			
 			this.say(target, 'Available routers:');
 			for(var i in locations){
-				this.say(target, i + ' - ' + locations[i]);
+				str += (target, i + ' - ' + locations[i]) + '\n';
 			}
+			
+			this.say(target, str);
 		}
 	}
 ];

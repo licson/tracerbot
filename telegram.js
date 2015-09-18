@@ -250,7 +250,7 @@ Bot.prototype.connect = function(){
 			self.processCommands(chatID, from, text);
 		}
 		
-		console.log("%s => %s: %s", data.from.username || data.from.first_name, data.chat.username || data.chat.first_name || data.chat.title, text);
+		console.log("%s => %s: %s",data.from.username || data.from.first_name, data.chat.username || data.chat.first_name || data.chat.title, text);
 	});
 };
 

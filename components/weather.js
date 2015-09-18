@@ -83,6 +83,7 @@ module.exports = [
 			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city + '&lang=' + this.opts.weather.language, function(e, res, body){
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
+					var str = '';
 
 					if(parseInt(info.cod) != 200){
 						self.say(target, info.message);
@@ -99,10 +100,12 @@ module.exports = [
 						var windyness = getWindDescription(forecast.speed);
 						var cloudiness = getCloudiness(forecast.clouds);
 						var output = time.format('ddd Do, MMM') + ' - ' + desc + '; ';
+						
 						output += 'Temperature: ' + tempMin + ' - ' + tempMax + '°C, that day is ' + cloudiness + ' and ' + windyness;
-
-						self.say(target, output);
+						str += output + '\n';
 					});
+					
+					self.say(target, str);
 				}
 				else {
 					self.say(target, 'Error: Cannot get forecast data at this moment.');

@@ -1,3 +1,4 @@
+var request = require('request');
 var srg = require('../modules/srg');
 
 module.exports = {
@@ -23,7 +24,12 @@ module.exports = {
 			server: server,
 			noRandomize: true
 		}, function(result){
-			self.say(target, from + ': ' + result.resultImage);
+			if(self.tg){
+				self.tg.sendPhoto(target, request(result.resultImage));
+			}
+			else {
+				self.say(target, from + ': ' + result.resultImage);	
+			}
 		});
 	}
 };
