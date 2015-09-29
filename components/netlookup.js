@@ -30,14 +30,14 @@ module.exports = [
 					var output = '';
 
 					// Show information of ISP
-					output += 'ISP: ' + info.org;
+					output += 'ISP: ' + (info.org || 'unknown');
 					output += ' | Country: ' + info.country;
 
 					if(info.city != null){
 						output += ' | City: ' + info.city;
 					}
 					
-					if(info.region != null){
+					if(info.region != ""){
 						output += ' | Region: ' + info.region;
 					}
 					
