@@ -19,7 +19,7 @@ module.exports = [
 		def: function(args, target){
 			var self = this;
 
-			if(!IP_ADDRESS.test(args[0]) || !IP6_ADDRESS.test(args[0])){
+			if(!IP_ADDRESS.test(args[0]) && !IP6_ADDRESS.test(args[0])){
 				this.say(target, 'Please specify an IP address.');
 				return;
 			}
