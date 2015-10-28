@@ -24,9 +24,17 @@ module.exports = [
 				return;
 			}
 
-			request('http://ipinfo.io/' + args[0], function(e, res, body){
+			request({
+				url: 'http://ipinfo.io/' + args[0],
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.18 Safari/537.36'
+				}
+			}, function(e, res, body){
 				if(!e && res.statusCode == 200){
-					var info = JSON.parse(body);
+					var $ = cheerio.load(body);
+					var txt_info = $('pre').text().replace('$ curl ipinfo.io/' + args[0], '');
+					
+					var info = JSON.parse(txt_info);
 					var output = '';
 
 					// Show information of ISP
