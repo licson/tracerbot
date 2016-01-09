@@ -44,7 +44,7 @@ module.exports = [
 			var self = this;
 			var city = args[0].replace(/(&|\?|=)/g, '');
 
-			request('http://api.openweathermap.org/data/2.5/weather?q=' + city, function(e, res, body){
+			request('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + this.opts.weather.key, function(e, res, body){
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
 										
@@ -80,7 +80,7 @@ module.exports = [
 			var self = this;
 			var city = args[0].replace(/(&|\?|=)/g, '');
 
-			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city + '&lang=' + this.opts.weather.language, function(e, res, body){
+			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city + '&lang=' + this.opts.weather.language + '&appid=' + this.opts.weather.key, function(e, res, body){
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
 					var str = '';
