@@ -32,7 +32,7 @@ module.exports = [
 			}, function(e, res, body){
 				if(!e && res.statusCode == 200){
 					var $ = cheerio.load(body);
-					var txt_info = $('pre').text().replace('$ curl ipinfo.io/' + args[0], '');
+					var txt_info = $('pre.example-results-basic').text();
 					
 					var info = JSON.parse(txt_info);
 					var output = '';
