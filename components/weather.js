@@ -33,6 +33,11 @@ var getWindDescription = function(p){
 	return windyness;
 };
 
+var getPreceivedTemperature = function(temp, humidity){
+	var e = 6.122 * Math.pow(10, (7.5 * temp) / (237.7 + temp)) * (humidity / 100);
+	return Math.round(temp + (5 / 9) * (e - 10));	
+};
+
 module.exports = [
 	{
 		name: 'weather',
@@ -60,6 +65,7 @@ module.exports = [
 					// Construct the message
 					output += 'Current weather in '  + info.name + ', ' + info.sys.country + ': ' + info.weather[0].description;
 					output += '\nCurrent temperature is ' + Math.round(info.main.temp - 273.15) + '°C, with humidity of ' + info.main.humidity + '%,\n';
+					output += 'Preceived temperature is ' + getPreceivedTemperature(info.main.temp - 273.15, info.main.humidity) + '°C\n';
 					output += 'Today is ' + cloudiness + ' and ' + windyness;
 
 					self.say(target, output);
