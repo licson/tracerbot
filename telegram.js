@@ -148,14 +148,16 @@ Bot.prototype.join = function(chan){
 
 Bot.prototype.checkAdmin = function(name, cb){
 	var self = this;
-	this.irc.whois(name, function(data){
-		if(typeof data.account !== "undefined" && self.admins.indexOf(data.account) > -1){
+	if(this.admins.indexOf(name) > -1){
+		process.nextTick(function(){
 			cb.call(self, true);
-		}
-		else {
+		})
+	}
+	else {
+		process.nextTick(function(){
 			cb.call(self, false);
-		}
-	});
+		})
+	}
 };
 
 Bot.prototype.checkBanList = function(user, cmd){
