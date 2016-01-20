@@ -29,7 +29,10 @@
   "bugs": {
     "url": "https://github.com/licson0729/tracerbot/issues"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "~2.3.4",
+    "should": "~8.1.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -10,9 +10,6 @@ var Bot = function(){
 
 	this.irc = null;
 	this.startTime = Date.now();
-
-	this.load();
-	this.connect();
 };
 
 Bot.prototype.load = function(){
@@ -192,7 +189,7 @@ Bot.prototype.checkBanList = function(user, cmd){
 }
 
 Bot.prototype.processCommands = function(to, from, message){
-	cmd = message.substr(1);
+	var cmd = message.substr(1);
 	var parsed = this.parseCommandArguments(cmd);
 	var command = parsed.shift();
 	var args = parsed;
@@ -279,5 +276,4 @@ Bot.prototype.connect = function(){
 	});
 };
 
-global.Bot = Bot;
-global.ircBot = new Bot();
+module.exports = Bot;
