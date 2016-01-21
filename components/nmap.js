@@ -14,7 +14,7 @@ module.exports = {
 		{ name: 'options', required: false }
 	],
 	def: function(args, target, from){
-    var interval = this.getOption('options.nmap.ratelimit_interval')
+		var interval = this.getOption('options.nmap.ratelimit_interval')
 		var self = this;
 
 		if(rate_limit.indexOf(from) > -1){
@@ -64,9 +64,9 @@ module.exports = {
 				self.say('Error: ' + e.toString());
 			});
 
-      nmap.stdout.on('finish', function () {
-        self.send();
-      });
+			nmap.stdout.on('finish', function () {
+				self.send();
+			});
 
 			nmap.on('error', function(e){
 				self.say(target, 'Error: ' + e.toString());

@@ -2,7 +2,7 @@
 
 const IP_ADDRESS = /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/;
 var Telnet = require('../modules/telnet');
-var routers = {
+const routers = {
 	hkg: '218.188.104.6',
 	tpe: '218.189.23.146',
 	lon: '185.25.247.226',
@@ -12,7 +12,7 @@ var routers = {
 	ams: '67.17.81.187'
 };
 
-var locations = {
+const locations = {
 	hkg: 'Hong Kong, HK',
 	tpe: 'Taipei, TW',
 	lon: 'London, UK',
@@ -51,7 +51,7 @@ module.exports = [
 					result = result.replace('Type escape sequence to abort.', '');
 					result = result.replace('!!!!!', '');
 					self.say(result);
-          self.send();
+					self.send();
 				});
 			}
 			else {
@@ -74,7 +74,7 @@ module.exports = [
 			if(router in routers){
 				connect(router, 'traceroute ' + host, function(result){
 					self.say(result);
-          self.send();
+					self.send();
 				});
 			}
 			else {
@@ -102,7 +102,7 @@ module.exports = [
 			if(router in routers){
 				connect(router, 'show ip bgp ' + host, function(result){
 					self.say(result);
-          self.send();
+					self.send();
 				});
 			}
 			else {
@@ -116,12 +116,12 @@ module.exports = [
 		args: [],
 		def: function(args, target){
 			var str = '';
-			
-			this.say(target, 'Available routers:');
+
+			this.say('Available routers:');
 			for(var i in locations){
-				str += (target, i + ' - ' + locations[i]) + '\n';
+				str += (i + ' - ' + locations[i]) + '\n';
 			}
-			
+
 			this.say(str);
 		}
 	}

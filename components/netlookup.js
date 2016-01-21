@@ -35,7 +35,7 @@ module.exports = [
 				if(!e && res.statusCode == 200){
 					var $ = cheerio.load(body);
 					var txt_info = $('pre.example-results-basic').text();
-					
+
 					var info = JSON.parse(txt_info);
 					var output = '';
 
@@ -46,21 +46,21 @@ module.exports = [
 					if(info.city != null){
 						output += ' | City: ' + info.city;
 					}
-					
+
 					if(info.region != ""){
 						output += ' | Region: ' + info.region;
 					}
-					
+
 					if(info.hosting){
 						output += '\nThis IP belongs to a hosting company.';
 					}
-					
+
 					if(info.carrier){
 						output += '\nThis IP belongs to a mobile carrier named "' + info.carrier + '"';
 					}
 
 					self.say(output);
-          self.send();
+					self.send();
 				}
 			});
 		}
@@ -78,7 +78,7 @@ module.exports = [
 				if('basic' in cache[asnum]){
 					var result = cache[asnum]['basic'];
 					this.say(result);
-          return ;
+					return ;
 				}
 			}
 			else {
@@ -99,12 +99,12 @@ module.exports = [
 						cache[asnum]['basic'] += $('.asinfotext').text().replace(/[\t]{1,}/g, '');
 
 						self.say(cache[asnum]['basic']);
-            self.send();
+						self.send();
 					}
 				});
 			}
 		}
-	}, 
+	},
 	{
 		name: 'aspeer',
 		desc: 'Get a list of connected networks of an Autonomous System (network).',
@@ -155,7 +155,7 @@ module.exports = [
 						}
 
 						self.say(cache[asnum]['peers']);
-            self.send();
+						self.send();
 					}
 				});
 			}

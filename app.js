@@ -14,4 +14,4 @@ stdin.addListener('data', function (data) {
 });
 
 global.Bot = Tracer;
-global.icrBot = tracer;
+global.ircBot = tracer;

@@ -31,7 +31,7 @@ module.exports = {
 				x.on('finish', function(){
 					self.tg.sendPhoto(target, tempDir + '/speedtest.png');
 				});
-				
+
 				request(result.resultImage).pipe(x);
 			}
 			else {

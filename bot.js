@@ -141,7 +141,6 @@ Bot.prototype.checkArgs = function(args, command){
 };
 
 Bot.prototype.say = function(target, msg){
-  console.log(target, msg);
 	this.irc.say(target, msg);
 };
 

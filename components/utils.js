@@ -17,59 +17,59 @@ module.exports = [
 
 				switch(args[0]){
 					case "op":
-					if(this.admins.indexOf(args[1]) < 0){
-						this.admins.push(args[1]);
-						this.say('Successfully added ' + args[1] + ' as an operator.');
-					}
-					else {
-						this.say('User ' + args[1] + ' is already an operator.');
-					}
-					break;
+						if(this.admins.indexOf(args[1]) < 0){
+							this.admins.push(args[1]);
+							this.say('Successfully added ' + args[1] + ' as an operator.');
+						}
+						else {
+							this.say('User ' + args[1] + ' is already an operator.');
+						}
+						break;
 
 					case "deop":
-					this.admins.indexOf(args[1]) > -1 && this.admins.splice(this.admins.indexOf(args[1]), 1);
-					this.say('User ' + args[1] + ' is no longer an operator.');
-					break;
+						this.admins.indexOf(args[1]) > -1 && this.admins.splice(this.admins.indexOf(args[1]), 1);
+						this.say('User ' + args[1] + ' is no longer an operator.');
+						break;
 
 					case "ban":
-					var cmd = args[1];
-					var user = args[2];
+						var cmd = args[1];
+						var user = args[2];
 
-					if(!cmd || !user){
-						this.say('Please specify the user and command to be banned.');
-						return;
-					}
+						if(!cmd || !user){
+							this.say('Please specify the user and command to be banned.');
+							return;
+						}
 
-					if(Array.isArray(this.banlist[cmd])){
-						this.banlist[cmd].push(user);
-					}
-					else {
-						this.banlist[cmd] = [];
-						this.banlist[cmd].push(user);
-					}
-					this.say('Banned ' + user + ' from executing ' + cmd + '!');
-					break;
+						if(Array.isArray(this.banlist[cmd])){
+							this.banlist[cmd].push(user);
+						}
+						else {
+							this.banlist[cmd] = [];
+							this.banlist[cmd].push(user);
+						}
+						this.say('Banned ' + user + ' from executing ' + cmd + '!');
+						break;
 
 					case "unban":
-					var cmd = args[1];
-					var user = args[2];
+						var cmd = args[1];
+						var user = args[2];
 
-					if(!cmd || !user){
-						this.say('Please specify the user and command to be banned.');
-						return;
-					}
+						if(!cmd || !user){
+							this.say('Please specify the user and command to be banned.');
+							return;
+						}
 
-					if(this.banlist[cmd].indexOf(user) > -1){
-						this.banlist[cmd].splice(this.banlist[cmd].indexOf(user), 1);
-						this.regexCache[cmd] = null;
-					}
+						if(this.banlist[cmd].indexOf(user) > -1){
+							this.banlist[cmd].splice(this.banlist[cmd].indexOf(user), 1);
+							this.regexCache[cmd] = null;
+						}
 
-					this.say('Unbanned ' + user + ' from executing ' + cmd + '!');
-					break;
+						this.say('Unbanned ' + user + ' from executing ' + cmd + '!');
+						break;
 
 					default:
-					this.say('I don\'t understand what you\'re doing.');
-					break;
+						this.say('I don\'t understand what you\'re doing.');
+						break;
 				}
 			});
 		}

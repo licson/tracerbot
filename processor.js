@@ -7,15 +7,15 @@ const OK = true;
 const ERROR = false;
 
 function CommandProcessor(bot) {
-  this.components = {};
-  this.config = null;
-  this.sender = null;
-  this.admin = null;
+	this.components = {};
+	this.config = null;
+	this.sender = null;
+	this.admin = null;
 
-  this.buffer = [];
-  this.regexCache = [];
+	this.buffer = [];
+	this.regexCache = [];
 
-  this.bot = bot
+	this.bot = bot
 }
 
 /**
@@ -23,12 +23,12 @@ function CommandProcessor(bot) {
  * @param {Date}time
  */
 CommandProcessor.prototype.setUptime = function (time) {
-  this.uptime = time;
+	this.uptime = time;
 };
 
 CommandProcessor.prototype.setAdminCheck = function(func) {
-  if ('function' === typeof func)
-    this.admin = func;
+	if ('function' === typeof func)
+		this.admin = func;
 };
 
 /**
@@ -36,7 +36,7 @@ CommandProcessor.prototype.setAdminCheck = function(func) {
  * @param config
  */
 CommandProcessor.prototype.setConfig = function(config) {
-  this.config = config;
+	this.config = config;
 };
 
 /**
@@ -44,9 +44,9 @@ CommandProcessor.prototype.setConfig = function(config) {
  * @param func function
  */
 CommandProcessor.prototype.setSend = function(func) {
-  if ('function' === typeof func) {
-    this.sender = func;
-  }
+	if ('function' === typeof func) {
+		this.sender = func;
+	}
 };
 
 /**
@@ -55,10 +55,10 @@ CommandProcessor.prototype.setSend = function(func) {
  * @param message
  */
 CommandProcessor.prototype.say = function(channel, message) {
-  if (!(channel in this.buffer)) {
-    this.buffer[channel] = [];
-  }
-  this.buffer[channel].push(message);
+	if (!(channel in this.buffer)) {
+		this.buffer[channel] = [];
+	}
+	this.buffer[channel].push(message);
 };
 
 /**
@@ -66,13 +66,15 @@ CommandProcessor.prototype.say = function(channel, message) {
  * @param channel
  */
 CommandProcessor.prototype.send = function(channel) {
-  if (!(channel in this.buffer) || !this.buffer[channel]) return;
-  var self = this;
-  this.buffer[channel].forEach(function (message) {
-    console.log(channel + ': ' + message);
-    self.sender(channel, message);
-  });
-  this.buffer[channel] = [];
+	if (!(channel in this.buffer) || !this.buffer[channel]) return;
+	var self = this;
+	this.buffer[channel].forEach(function (message) {
+		console.log(channel + ': ' + message);
+		try {
+			self.sender(channel, message);
+		}catch(e) {}
+	});
+	this.buffer[channel] = [];
 };
 
 /**
@@ -80,26 +82,26 @@ CommandProcessor.prototype.send = function(channel) {
  * @param {function} callback Optional Callback
  */
 CommandProcessor.prototype.load = function (callback) {
-  var self = this, path = __dirname + '/components/';
-  var list = fs.readdirSync(path);
-  list.forEach(function(component){
-    var comp = require(path + component);
-    console.log('Loaded component %s', component);
+	var self = this, path = __dirname + '/components/';
+	var list = fs.readdirSync(path);
+	list.forEach(function(component){
+		var comp = require(path + component);
+		console.log('Loaded component %s', component);
 
-    if(Array.isArray(comp)){
-      comp.forEach(function(subs){
-        console.log('Loaded command definition %s from component %s', subs.name, component);
-        self.components[subs.name] = subs;
-      });
-    }
-    else {
-      console.log('Loaded command definition %s from component %s', comp.name, component);
-      self.components[comp.name] = comp;
-    }
-  });
-  if ('function' === typeof callback) {
-    callback.call(this);
-  }
+		if(Array.isArray(comp)){
+			comp.forEach(function(subs){
+				console.log('Loaded command definition %s from component %s', subs.name, component);
+				self.components[subs.name] = subs;
+			});
+		}
+		else {
+			console.log('Loaded command definition %s from component %s', comp.name, component);
+			self.components[comp.name] = comp;
+		}
+	});
+	if ('function' === typeof callback) {
+		callback.call(this);
+	}
 };
 
 /**
@@ -109,24 +111,24 @@ CommandProcessor.prototype.load = function (callback) {
  * @returns {string}
  */
 CommandProcessor.prototype.generateHelpMessage = function (command) {
-  if(command in this.components){
-    var component = this.components[command];
-    var str = '-' + command;
+	if(command in this.components){
+		var component = this.components[command];
+		var str = '-' + command;
 
-    component.args.forEach(function(arg){
-      if(arg.required){
-        str += (' <' + arg.name + '>');
-      }
-      else {
-        str += (' [' + arg.name + ']');
-      }
-    });
+		component.args.forEach(function(arg){
+			if(arg.required){
+				str += (' <' + arg.name + '>');
+			}
+			else {
+				str += (' [' + arg.name + ']');
+			}
+		});
 
-    str += '\n';
-    str += component.desc;
+		str += '\n';
+		str += component.desc;
 
-    return str;
-  }
+		return str;
+	}
 };
 
 /**
@@ -136,37 +138,37 @@ CommandProcessor.prototype.generateHelpMessage = function (command) {
  * @returns {boolean}
  */
 CommandProcessor.prototype.checkBanList = function(user, cmd) {
-  var banlist = this.config.getOption('banlist.' + cmd);
-  if(Array.isArray(banlist)){
-    if(banlist.length === 0){
-      return OK;
-    }
+	var banlist = this.config.getOption('banlist.' + cmd);
+	if(Array.isArray(banlist)){
+		if(banlist.length === 0){
+			return OK;
+		}
 
-    var result = OK;
+		var result = OK;
 
-    if(Array.isArray(this.regexCache[cmd])){
-      this.regexCache[cmd].forEach(function(rule){
-        if(rule.test(user)) result = result && false;
-      });
-    }
-    else {
-      var self = this;
-      this.regexCache[cmd] = [];
+		if(Array.isArray(this.regexCache[cmd])){
+			this.regexCache[cmd].forEach(function(rule){
+				if(rule.test(user)) result = result && false;
+			});
+		}
+		else {
+			var self = this;
+			this.regexCache[cmd] = [];
 
-      banlist.forEach(function(rule){
-        self.regexCache[cmd].push(new RegExp(rule, "gi"));
-      });
+			banlist.forEach(function(rule){
+				self.regexCache[cmd].push(new RegExp(rule, "gi"));
+			});
 
-      banlist.forEach(function(rule){
-        if(rule.test(user)) result = result && ERROR;
-      });
-    }
+			banlist.forEach(function(rule){
+				if(rule.test(user)) result = result && ERROR;
+			});
+		}
 
-    return result;
-  }
-  else {
-    return OK;
-  }
+		return result;
+	}
+	else {
+		return OK;
+	}
 };
 
 /**
@@ -176,23 +178,23 @@ CommandProcessor.prototype.checkBanList = function(user, cmd) {
  * @returns {boolean}
  */
 CommandProcessor.prototype.checkArgs = function(args, command) {
-  if(command in this.components){
-    var checkItems = this.components[command].args;
-    if(args.length >= checkItems.length || checkItems.length == 0){
-      return OK;
-    }
-    else {
-      var result = OK;
-      for(var i = 0; i < checkItems.length; i++){
-        if(!args[i] && checkItems[i].required) result = result && ERROR;
-      }
+	if(command in this.components){
+		var checkItems = this.components[command].args;
+		if(args.length >= checkItems.length || checkItems.length == 0){
+			return OK;
+		}
+		else {
+			var result = OK;
+			for(var i = 0; i < checkItems.length; i++){
+				if(!args[i] && checkItems[i].required) result = result && ERROR;
+			}
 
-      return result;
-    }
-  } else {
-    // Probably a bug if we hit here.
-    return ERROR;
-  }
+			return result;
+		}
+	} else {
+		// Probably a bug if we hit here.
+		return ERROR;
+	}
 };
 
 /**
@@ -201,7 +203,7 @@ CommandProcessor.prototype.checkArgs = function(args, command) {
  * @param {function}callback
  */
 CommandProcessor.prototype.checkAdmin = function(name, callback) {
-  this.admin(name, callback);
+	this.admin(name, callback);
 };
 
 /**
@@ -212,37 +214,37 @@ CommandProcessor.prototype.checkAdmin = function(name, callback) {
  * @param channel
  */
 CommandProcessor.prototype.processCommand = function(command, args, source, channel) {
-  if (!(this.checkBanList(source, 'all') && this.checkBanList(source, command))) {
-    this.say(channel, 'You are banned from using the command.');
-    this.send(channel);
-    return;
-  }
+	if (!(this.checkBanList(source, 'all') && this.checkBanList(source, command))) {
+		this.say(channel, 'You are banned from using the command.');
+		this.send(channel);
+		return;
+	}
 
-  if(command.toLowerCase() == 'help'){
-    if(args[0]){
-      this.generateHelpMessage(args[0]);
-    }
-    else {
-      this.say(channel, 'Available commands: ' + Object.keys(this.components).join(', '));
-    }
-  }
-  else if(command in this.components) {
-    var selectedCommand = this.components[command];
-    if(this.checkArgs(args, command)){
-      var context = new Context(this, channel);
-      selectedCommand.def.apply(context, [args, channel, source]);
-    }
-    else {
-      this.say(channel, 'Missing arguments!');
-      var help = this.generateHelpMessage(command);
-      this.say(help);
-    }
-  }
-  else {
-    this.say(channel, 'No such command: ' + command);
-    this.say(channel, 'Use -help to get a list of commands, or -help <command> for usage.');
-  }
-  this.send(channel);
+	if(command.toLowerCase() == 'help'){
+		if(args[0]){
+			this.generateHelpMessage(args[0]);
+		}
+		else {
+			this.say(channel, 'Available commands: ' + Object.keys(this.components).join(', '));
+		}
+	}
+	else if(command in this.components) {
+		var selectedCommand = this.components[command];
+		if(this.checkArgs(args, command)){
+			var context = new Context(this, channel);
+			selectedCommand.def.apply(context, [args, channel, source]);
+		}
+		else {
+			this.say(channel, 'Missing arguments!');
+			var help = this.generateHelpMessage(command);
+			this.say(help);
+		}
+	}
+	else {
+		this.say(channel, 'No such command: ' + command);
+		this.say(channel, 'Use -help to get a list of commands, or -help <command> for usage.');
+	}
+	this.send(channel);
 };
 
 /**
@@ -250,7 +252,7 @@ CommandProcessor.prototype.processCommand = function(command, args, source, chan
  * @param callback
  */
 CommandProcessor.prototype.reload = function (callback) {
-  this.config.load('options', 'utf-8', callback);
+	this.config.load('options', 'utf-8', callback);
 };
 
 module.exports = CommandProcessor;

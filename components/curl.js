@@ -15,7 +15,7 @@ module.exports = {
 
 		if(rate_limit.indexOf(from) > -1){
 			this.say(target, 'You can only execute this command every ' + this.getOption('opts.curl.ratelimit_interval') +
-          ' second(s).');
+					' second(s).');
 			return;
 		}
 
@@ -33,9 +33,9 @@ module.exports = {
 				self.say(data);
 			});
 
-      curl.stdout.on('finish', function () {
-        self.send();
-      });
+			curl.stdout.on('finish', function () {
+				self.send();
+			});
 
 			curl.stdout.on('error', function(e){
 				self.say('curl.js Error: ' + e.toString());
