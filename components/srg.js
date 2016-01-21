@@ -1,5 +1,5 @@
 var request = require('request');
-var fs = require('fs')
+var fs = require('fs');
 var tempDir = require('os').tmpdir();
 var srg = require('../modules/srg');
 
@@ -35,7 +35,8 @@ module.exports = {
 				request(result.resultImage).pipe(x);
 			}
 			else {
-				self.say(target, from + ': ' + result.resultImage);	
+				self.say(from + ': ' + result.resultImage);
+				self.send();
 			}
 		});
 	}

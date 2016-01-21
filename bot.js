@@ -1,5 +1,9 @@
+'use strict';
+
 var irc = require('irc');
 var fs = require('fs');
+var Processor = require('./processor');
+var Config = require('./config');
 
 var Bot = function(){
 	this.components = {};
@@ -8,20 +12,24 @@ var Bot = function(){
 	this.opts = {};
 	this.regexCache = {};
 
+  this.processor = new Processor(this);
+  this.config = new Config(__dirname + '/config/');
+
 	this.irc = null;
 	this.startTime = Date.now();
 };
 
 Bot.prototype.load = function(){
 	this.loadOptions();
-	this.loadComponents();
+  this.processor.load();
+  this.processor.setConfig(this.config);
 	this.setupEventHandlers();
+  this.processor.setSend(this.say.bind(this));
+  this.processor.setAdminCheck(this.checkAdmin.bind(this));
 };
 
 Bot.prototype.loadOptions = function(){
-	this.opts = JSON.parse(fs.readFileSync(__dirname + '/config/options.json', 'utf8'));
-	this.admins = JSON.parse(fs.readFileSync(__dirname + '/config/admins.json', 'utf8'));
-	this.banlist = JSON.parse(fs.readFileSync(__dirname + '/config/banlist.json', 'utf8'));
+  this.config.loadOption(['options', 'admins', 'banlist']);
 };
 
 Bot.prototype.loadComponents = function(){
@@ -45,14 +53,11 @@ Bot.prototype.loadComponents = function(){
 };
 
 Bot.prototype.setupEventHandlers = function(){
-	var self = this;
-
+  var self = this;
 	process.stdin.resume();
 	process.nextTick(function() {
 		process.on('exit', function(){
-			fs.writeFileSync(__dirname + '/config/admins.json', JSON.stringify(self.admins, null, 4));
-			fs.writeFileSync(__dirname + '/config/banlist.json', JSON.stringify(self.banlist, null, 4));
-			fs.writeFileSync(__dirname + '/config/options.json', JSON.stringify(self.opts, null, 4));
+			self.config.record();
 		});
 		
 		process.on('SIGINT', function(){
@@ -136,17 +141,18 @@ Bot.prototype.checkArgs = function(args, command){
 };
 
 Bot.prototype.say = function(target, msg){
+  console.log(target, msg);
 	this.irc.say(target, msg);
 };
 
-Bot.prototype.join = function(chan){
-	this.irc.join(chan);
+Bot.prototype.join = function(channel){
+	this.irc.join(channel);
 };
 
 Bot.prototype.checkAdmin = function(name, cb){
 	var self = this;
 	this.irc.whois(name, function(data){
-		if(typeof data.account !== "undefined" && self.admins.indexOf(data.account) > -1){
+		if(typeof data.account !== "undefined" && self.config.getOption('admins').indexOf(data.account) > -1){
 			cb.call(self, true);
 		}
 		else {
@@ -186,7 +192,7 @@ Bot.prototype.checkBanList = function(user, cmd){
 	else {
 		return true;
 	}
-}
+};
 
 Bot.prototype.processCommands = function(to, from, message){
 	var cmd = message.substr(1);
@@ -195,53 +201,22 @@ Bot.prototype.processCommands = function(to, from, message){
 	var args = parsed;
 
 	console.log('Received command: cmd=%s, args=%s', command, args);
-
-	if(!this.checkBanList(from, 'all')){
-		return;
-	}
-
-	if(!this.checkBanList(from, command)){
-		this.say(to, 'You are banned from using the command.');
-		return;
-	}
-
-	if(command.toLowerCase() == 'help'){
-		if(args[0]){
-			this.generateHelpMessage(to, args[0]);
-		}
-		else {
-			this.say(to, 'Available commands: ' + Object.keys(this.components).join(', '));
-		}
-	}
-	else if(command in this.components) {
-		var selectedCommand = this.components[command];
-		if(this.checkArgs(args, command)){
-			selectedCommand.def.apply(this, [args, to, from]);
-		}
-		else {
-			this.say(to, 'Missing arguments!');
-			this.generateHelpMessage(to, command);
-		}
-	}
-	else {
-		this.say(to, 'No such command: ' + command);
-		this.say(to, 'Use -help to get a list of commands, or -help <command> for usage.');
-	}
+  this.processor.processCommand(command, args, from, to);
 };
 
 Bot.prototype.connect = function(){
 	var self = this;
 
 	this.irc = new irc.Client(
-		this.opts.irc.host,
-		this.opts.botname, 
+		this.config.getOption('options.irc.host'),
+		this.config.getOption('options.botname'),
 		{
-			userName: this.opts.irc.username,
-			realName: this.opts.irc.realname,
-			secure: this.opts.irc.secure,
-			port: this.opts.irc.port,
+			userName: this.config.getOption('options.irc.username'),
+			realName: this.config.getOption('options.irc.realname'),
+			secure: this.config.getOption('options.irc.secure'),
+			port: this.config.getOption('options.irc.port'),
 			floodProtection: true,
-			channels: this.opts.channels,
+			channels: this.config.getOption('options.channels'),
 			debug: false
 		}
 	);
@@ -253,17 +228,17 @@ Bot.prototype.connect = function(){
 			self.say(to, 'pong');
 			return;
 		}
-
-		if(to == self.opts.botname || self.opts.channels.indexOf(to) > -1){
+    var botname = self.config.getOption('options.botname');
+		if(to == botname || self.config.getOption('options.channels').indexOf(to) > -1){
 			if(message.substr(0, 1) == '-'){
-				var target = (to == self.opts.botname) ? from : to;
+				var target = (to == botname) ? from : to;
 				self.processCommands(target, from, message);
 			}
 		}
 	});
 
 	this.irc.addListener('registered', function(){
-		console.log('Connected to server %s!', self.opts.irc.host);
+		console.log('Connected to server %s!', self.config.getOption('options.irc.host'));
 	});
 
 	this.irc.addListener('join', function(chan, nick){

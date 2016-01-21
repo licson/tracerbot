@@ -1,4 +1,6 @@
-var IP_ADDRESS = /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/;
+'use strict';
+
+const IP_ADDRESS = /^([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])$/;
 var Telnet = require('../modules/telnet');
 var routers = {
 	hkg: '218.188.104.6',
@@ -48,11 +50,12 @@ module.exports = [
 				connect(router, 'ping ' + host, function(result){
 					result = result.replace('Type escape sequence to abort.', '');
 					result = result.replace('!!!!!', '');
-					self.say(target, result);
+					self.say(result);
+          self.send();
 				});
 			}
 			else {
-				this.say(target, 'Wrong router identifier! Use -pops to get familiar with available router codes.');
+				this.say('Wrong router identifier! Use -pops to get familiar with available router codes.');
 			}
 		}
 	},
@@ -70,11 +73,12 @@ module.exports = [
 
 			if(router in routers){
 				connect(router, 'traceroute ' + host, function(result){
-					self.say(target, result);
+					self.say(result);
+          self.send();
 				});
 			}
 			else {
-				this.say(target, 'Wrong router identifier! Use -pops to get familiar with available router codes.');
+				this.say('Wrong router identifier! Use -pops to get familiar with available router codes.');
 			}
 		}
 	},
@@ -91,17 +95,18 @@ module.exports = [
 			var self = this;
 
 			if(!IP_ADDRESS.test(host)){
-				this.say(target, 'Only IP addresses can be specified for table lookup.');
+				this.say('Only IP addresses can be specified for table lookup.');
 				return;
 			}
 
 			if(router in routers){
 				connect(router, 'show ip bgp ' + host, function(result){
-					self.say(target, result);
+					self.say(result);
+          self.send();
 				});
 			}
 			else {
-				this.say(target, 'Wrong router identifier! Use -pops to get familiar with available router codes.');
+				this.say('Wrong router identifier! Use -pops to get familiar with available router codes.');
 			}
 		}
 	},
@@ -117,7 +122,7 @@ module.exports = [
 				str += (target, i + ' - ' + locations[i]) + '\n';
 			}
 			
-			this.say(target, str);
+			this.say(str);
 		}
 	}
 ];

@@ -49,12 +49,14 @@ module.exports = [
 			var self = this;
 			var city = encodeURIComponent(args[0]);
 
-			request('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + this.opts.weather.key, function(e, res, body){
+			request('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid='+
+					this.getOption('weather.key'), function(e, res, body){
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
 										
 					if(parseInt(info.cod) != 200){
-						self.say(target, info.message);
+						self.say(info.message);
+            self.send();
 						return;
 					}
 					
@@ -68,11 +70,12 @@ module.exports = [
 					output += 'Perceived temperature is ' + getPerceivedTemperature(info.main.temp - 273.15, info.main.humidity) + '°C\n';
 					output += 'Today is ' + cloudiness + ' and ' + windyness;
 
-					self.say(target, output);
+					self.say(output);
 				}
 				else {
-					self.say(target, 'Error: Cannot get weather data at this moment.');
+					self.say('Error: Cannot get weather data at this moment.');
 				}
+        self.send();
 			});
 		}
 	},
@@ -86,13 +89,17 @@ module.exports = [
 			var self = this;
 			var city = encodeURIComponent(args[0]);
 
-			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city + '&lang=' + this.opts.weather.language + '&appid=' + this.opts.weather.key, function(e, res, body){
+			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city +
+					'&lang=' + this.getOption('weather.language') +
+					'&appid=' + this.getOption('weather.key'),
+					function(e, res, body){
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
 					var str = '';
 
 					if(parseInt(info.cod) != 200){
-						self.say(target, info.message);
+						self.say(info.message);
+            self.send();
 						return;
 					}
 
@@ -111,11 +118,12 @@ module.exports = [
 						str += output + '\n';
 					});
 					
-					self.say(target, str);
+					self.say(str);
 				}
 				else {
-					self.say(target, 'Error: Cannot get forecast data at this moment.');
+					self.say('Error: Cannot get forecast data at this moment.');
 				}
+            self.send();
 			});
 		}
 	}

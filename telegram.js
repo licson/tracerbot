@@ -1,3 +1,5 @@
+'use strict';
+
 var tg = require('node-telegram-bot-api');
 var fs = require('fs');
 
@@ -142,7 +144,7 @@ Bot.prototype.say = function(target, msg){
 	this.tg.sendMessage(target, msg);
 };
 
-Bot.prototype.join = function(chan){
+Bot.prototype.join = function(channel){
 	console.warn('Bot.join is not implemented in Telegram.');
 };
 

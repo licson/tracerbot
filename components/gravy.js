@@ -1,3 +1,5 @@
+'use strict';
+
 var fork = require('child_process').fork;
 var jobs = {};
 
@@ -24,13 +26,13 @@ module.exports = {
 					proc.kill('SIGINT');
 				}
 				else {
-					this.say(target, 'Invalid test ID.');
+					this.say('Invalid test ID.');
 				}
 			}
 			else {
 				var host = args[0];
-				var port = args[1] || this.opts.gravy.port;
-				var players = args[2] || this.opts.gravy.players;
+				var port = args[1] || this.getOption('options.gravy.port');
+				var players = args[2] || this.getOption('options.gravy.players');
 				var id = Math.floor(Math.random() * 0xffffffff).toString(16);
 				var proc = fork(__dirname + '/../modules/gravy_child.js');
 
@@ -47,8 +49,8 @@ module.exports = {
 
 				jobs[id] = proc;
 
-				this.say(target, 'Test #' + id + ' initiated. Use -gravy stop <id> to stop the test.');
+				this.say('Test #' + id + ' initiated. Use -gravy stop <id> to stop the test.');
 			}
 		});
 	}
-}
+};
