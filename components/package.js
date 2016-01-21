@@ -38,24 +38,24 @@ function searchGem(query) {
 }
 
 var languageSupport = {
-  name: 'support',
-  desc: 'Get Support Language',
-  args: [],
-  def: function(args, target) {
-    this.say('Support Language for Package Search:');
+	name: 'support',
+	desc: 'Get Support Language',
+	args: [],
+	def: function(args, target) {
+		this.say('Support Language for Package Search:');
 		for (var language in supportLanguage) {
 			this.say(language);
 		}
-  }
+	}
 };
 
 var packageSearch = {
-  name: 'package',
-  desc: 'Search for packages',
-  args: [
-    {name: 'language', required: true},
-    {name: 'query'}
-  ],
+	name: 'package',
+	desc: 'Search for packages',
+	args: [
+		{name: 'language', required: true},
+		{name: 'query'}
+	],
 	def: function(args, target) {
 		if (args[0] in supportLanguage)
 			supportLanguage[args[0]].call(this, [args[1]]);
