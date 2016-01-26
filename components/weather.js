@@ -3,7 +3,6 @@ var moment = require('moment');
 
 var getCloudiness = function(p){
 	var cloudiness = 'cloudy';
-
 	if(p < 80){
 		cloudiness = 'slightly cloudy';
 	}
@@ -17,25 +16,26 @@ var getCloudiness = function(p){
 
 var getWindDescription = function(p){
 	var windyness = 'no wind';
-
-	if(p > 30){
-		windyness = 'have typhoons';
-	}
-
-	if(p > 15){
-		windyness = 'have strong wind';
-	}
-
-	if(p > 5){
-		windyness = 'windy';
-	}
+	
+	if(p > 0.514444) windyness = 'light air';
+	if(p > 2.05778) windyness = 'light breeze';
+	if(p > 3.60111) windyness = 'gentle breeze';
+	if(p > 5.65889) windyness = 'moderate breeze';
+	if(p > 8.74556) windyness = 'fresh breeze';
+	if(p > 11.3178) windyness = 'strong breeze';
+	if(p > 14.4044) windyness = 'near gale';
+	if(p > 17.4911) windyness = 'gale';
+	if(p > 21.0922) windyness = 'strong gale';
+	if(p > 24.6933) windyness = 'storm';
+	if(p > 28.8089) windyness = 'violent storm';
+	if(p > 32.9244) windyness = 'typhoon';
 
 	return windyness;
 };
 
-var getPerceivedTemperature = function(temp, humidity){
+var getPerceivedTemperature = function(temp, wind, humidity){
 	var e = 6.122 * Math.pow(10, (7.5 * temp) / (237.7 + temp)) * (humidity / 100);
-	return Math.round(temp + (5 / 9) * (e - 10));	
+	return Math.round(1.07 * temp + 0.2 * e - 0.6 * wind - 2.7);	
 };
 
 module.exports = [
@@ -65,7 +65,7 @@ module.exports = [
 					// Construct the message
 					output += 'Current weather in '  + info.name + ', ' + info.sys.country + ': ' + info.weather[0].description;
 					output += '\nCurrent temperature is ' + Math.round(info.main.temp - 273.15) + '°C, with humidity of ' + info.main.humidity + '%,\n';
-					output += 'Perceived temperature is ' + getPerceivedTemperature(info.main.temp - 273.15, info.main.humidity) + '°C\n';
+					output += 'Perceived temperature is ' + getPerceivedTemperature(info.main.temp - 273.15, info.wind.speed, info.main.humidity) + '°C\n';
 					output += 'Today is ' + cloudiness + ' and ' + windyness;
 
 					self.say(target, output);
@@ -103,7 +103,7 @@ module.exports = [
 						var tempMin = Math.round(forecast.temp.min - 273.15);
 						var tempMax = Math.round(forecast.temp.max - 273.15);
 						var desc = forecast.weather[0].description;
-						var windyness = getWindDescription(forecast.speed);
+						var windyness = getWindDescription(forecast.wind.speed);
 						var cloudiness = getCloudiness(forecast.clouds);
 						var output = time.format('ddd Do, MMM') + ' - ' + desc + '; ';
 						
