@@ -24,7 +24,20 @@ module.exports = {
 				}, this.opts.curl.ratelimit_interval * 1000);
 			}
 
+			// emergincy patch
+			var badCommand = false
+			args = args.forEach(function (str) {
+				if (str.match(/file:/)) {
+					badCommand = true;
+				}
+			})
+			if (badCommand) {
+				return self.say(target, 'curl.js Error: ' + new Error('unknown error'));
+			}
+
+
 			var curl = spawn('curl', args);
+
 
 			curl.stdout.on('data', function(data){
 				self.say(target, data);
