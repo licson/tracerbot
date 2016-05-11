@@ -46,4 +46,5 @@ module.exports = function(host, port, seq, cb) {
 			saved = "";
 		}
 	});
+	return socket;
 };

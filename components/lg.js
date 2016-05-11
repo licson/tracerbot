@@ -7,7 +7,10 @@ var routers = {
 	lax: '218.188.105.2',
 	phx: '67.17.81.28',
 	fra: '213.200.64.94',
-	ams: '67.17.81.187'
+	ams: '67.17.81.187',
+	dar: { addr: '105.21.160.2', user: 'lg' },
+	mba: { addr: '105.21.0.2', user: 'lg' },
+	jnb: { addr: '105.22.32.2', user: 'lg' }
 };
 
 var locations = {
@@ -17,14 +20,30 @@ var locations = {
 	lax: 'Los Angeles, CA, US',
 	phx: 'Phoenix, AZ, US',
 	fra: 'Frankfurt, GE',
-	ams: 'Amsterdam, NL'
+	ams: 'Amsterdam, NL',
+	dar: 'Dar es Salaam, TZ',
+	mba: 'Mombasa, KE',
+	jnb: 'Johannesberg, ZA'
 };
 
 var connect = function(router, cmd, callback){
-	Telnet(routers[router], 23, [
+	var addr = routers[router].addr || routers[router];
+	var username = routers[router].user;
+	var password = routers[router].pass;
+	var steps = [
 		{ expect: '>', send: cmd + "\r\n" },
 		{ expect: '>', out: callback, send: 'exit\r\n' }
-	], function(e){
+	];
+	
+	if(username){
+		steps = [{ expect: 'Username:', send: username + '\r\n' }].concat(steps);
+	}
+	
+	if(username && password){
+		steps = [steps.shift(), { expect: 'Password:', send: username + '\r\n' }].concat(steps);
+	}
+	
+	Telnet(addr, 23, steps, function(e){
 		if(e){
 			console.log('lg.js: Error occured during connecting to %s', routers[router]);
 		}
