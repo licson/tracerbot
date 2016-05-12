@@ -1,3 +1,5 @@
+'use strict';
+
 var spawn = require('child_process').spawn;
 var rate_limit = [];
 
@@ -12,7 +14,8 @@ module.exports = {
 		var self = this;
 
 		if(rate_limit.indexOf(from) > -1){
-			this.say(target, 'You can only execute this command every ' + this.opts.curl.ratelimit_interval + ' second(s).');
+			this.say(target, 'You can only execute this command every ' + this.getOption('opts.curl.ratelimit_interval') +
+					' second(s).');
 			return;
 		}
 
@@ -21,22 +24,26 @@ module.exports = {
 				rate_limit.push(from);
 				setTimeout(function(){
 					rate_limit.splice(rate_limit.indexOf(from), 1);
-				}, this.opts.curl.ratelimit_interval * 1000);
+				}, this.getOption('options.curl.ratelimit_interval') * 1000);
 			}
 
 			var curl = spawn('curl', args);
 
 			curl.stdout.on('data', function(data){
-				self.say(target, data);
+				self.say(data);
+			});
+
+			curl.stdout.on('finish', function () {
+				self.send();
 			});
 
 			curl.stdout.on('error', function(e){
-				self.say(target, 'curl.js Error: ' + e.toString());
+				self.say('curl.js Error: ' + e.toString());
 			});
 
 			curl.on('error', function(e){
-				self.say(target, 'curl.js Error: ' + e.toString());
+				self.say('curl.js Error: ' + e.toString());
 			});
 		});
 	}
-}
+};

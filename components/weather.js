@@ -35,7 +35,7 @@ var getWindDescription = function(p){
 
 var getPerceivedTemperature = function(temp, humidity){
 	var e = 6.122 * Math.pow(10, (7.5 * temp) / (237.7 + temp)) * (humidity / 100);
-	return Math.round(temp + (5 / 9) * (e - 10));	
+	return Math.round(temp + (5 / 9) * (e - 10));
 };
 
 module.exports = [
@@ -49,15 +49,17 @@ module.exports = [
 			var self = this;
 			var city = encodeURIComponent(args[0]);
 
-			request('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + this.opts.weather.key, function(e, res, body){
+			request('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid='+
+					this.getOption('weather.key'), function(e, res, body){
 				if(!e && res.statusCode == 200){
 					var info = JSON.parse(body);
-										
+
 					if(parseInt(info.cod) != 200){
-						self.say(target, info.message);
+						self.say(info.message);
+						self.send();
 						return;
 					}
-					
+
 					var output = '';
 					var cloudiness = getCloudiness(info.clouds.all);
 					var windyness = getWindDescription(info.wind.speed);
@@ -68,11 +70,12 @@ module.exports = [
 					output += 'Perceived temperature is ' + getPerceivedTemperature(info.main.temp - 273.15, info.main.humidity) + '°C\n';
 					output += 'Today is ' + cloudiness + ' and ' + windyness;
 
-					self.say(target, output);
+					self.say(output);
 				}
 				else {
-					self.say(target, 'Error: Cannot get weather data at this moment.');
+					self.say('Error: Cannot get weather data at this moment.');
 				}
+				self.send();
 			});
 		}
 	},
@@ -86,37 +89,42 @@ module.exports = [
 			var self = this;
 			var city = encodeURIComponent(args[0]);
 
-			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city + '&lang=' + this.opts.weather.language + '&appid=' + this.opts.weather.key, function(e, res, body){
-				if(!e && res.statusCode == 200){
-					var info = JSON.parse(body);
-					var str = '';
+			request('http://api.openweathermap.org/data/2.5/forecast/daily?cnt=7&q=' + city +
+					'&lang=' + this.getOption('weather.language') +
+					'&appid=' + this.getOption('weather.key'),
+					function(e, res, body){
+						if(!e && res.statusCode == 200){
+							var info = JSON.parse(body);
+							var str = '';
 
-					if(parseInt(info.cod) != 200){
-						self.say(target, info.message);
-						return;
-					}
+							if(parseInt(info.cod) != 200){
+								self.say(info.message);
+								self.send();
+								return;
+							}
 
-					self.say(target, 'Weather forecast for ' + info.city.name + ', ' + info.city.country + ':');
+							self.say(target, 'Weather forecast for ' + info.city.name + ', ' + info.city.country + ':');
 
-					info.list.forEach(function(forecast){
-						var time = moment(forecast.dt * 1000);
-						var tempMin = Math.round(forecast.temp.min - 273.15);
-						var tempMax = Math.round(forecast.temp.max - 273.15);
-						var desc = forecast.weather[0].description;
-						var windyness = getWindDescription(forecast.speed);
-						var cloudiness = getCloudiness(forecast.clouds);
-						var output = time.format('ddd Do, MMM') + ' - ' + desc + '; ';
-						
-						output += 'Temperature: ' + tempMin + ' - ' + tempMax + '°C, that day is ' + cloudiness + ' and ' + windyness;
-						str += output + '\n';
+							info.list.forEach(function(forecast){
+								var time = moment(forecast.dt * 1000);
+								var tempMin = Math.round(forecast.temp.min - 273.15);
+								var tempMax = Math.round(forecast.temp.max - 273.15);
+								var desc = forecast.weather[0].description;
+								var windyness = getWindDescription(forecast.speed);
+								var cloudiness = getCloudiness(forecast.clouds);
+								var output = time.format('ddd Do, MMM') + ' - ' + desc + '; ';
+
+								output += 'Temperature: ' + tempMin + ' - ' + tempMax + '°C, that day is ' + cloudiness + ' and ' + windyness;
+								str += output + '\n';
+							});
+
+							self.say(str);
+						}
+						else {
+							self.say('Error: Cannot get forecast data at this moment.');
+						}
+						self.send();
 					});
-					
-					self.say(target, str);
-				}
-				else {
-					self.say(target, 'Error: Cannot get forecast data at this moment.');
-				}
-			});
 		}
 	}
 ];
