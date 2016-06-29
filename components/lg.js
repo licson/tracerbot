@@ -5,9 +5,9 @@ var routers = {
 	tpe: '218.189.23.146',
 	lon: '185.25.247.226',
 	lax: '218.188.105.2',
-	phx: '67.17.81.28',
+	phx: { addr: '67.17.81.28', longBGPOutput: true },
 	fra: '213.200.64.94',
-	ams: '67.17.81.187',
+	ams: { addr: '67.17.81.187', longBGPOutput: true },
 	dar: { addr: '105.21.160.2', user: 'lg' },
 	mba: { addr: '105.21.0.2', user: 'lg' },
 	jnb: { addr: '105.22.32.2', user: 'lg' }
@@ -30,6 +30,7 @@ var connect = function(router, cmd, callback){
 	var addr = routers[router].addr || routers[router];
 	var username = routers[router].user;
 	var password = routers[router].pass;
+	
 	var steps = [
 		{ expect: '>', send: cmd + "\r\n" },
 		{ expect: '>', out: callback, send: 'exit\r\n' }
@@ -41,6 +42,10 @@ var connect = function(router, cmd, callback){
 	
 	if(username && password){
 		steps = [steps.shift(), { expect: 'Password:', send: username + '\r\n' }].concat(steps);
+	}
+	
+	if(routers[router].longBGPOutput && cmd.indexOf('show ip bgp') > -1){
+		steps = steps.concat([{ expect: '--More--', send: 'q\r\n' }, steps.pop()]);
 	}
 	
 	Telnet(addr, 23, steps, function(e){

@@ -21,7 +21,8 @@
     "irc": "~0.3.11",
     "moment": "~2.10.3",
     "node-telegram-bot-api": "*",
-    "request": "~2.55.0"
+    "request": "~2.55.0",
+    "whois": "^2.1.6"
   },
   "optionalDependencies": {
     "minecraft-protocol": "~0.12.3"
