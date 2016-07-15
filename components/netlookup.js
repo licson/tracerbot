@@ -58,6 +58,10 @@ module.exports = [
 						output += '\nThis IP belongs to a mobile carrier named "' + info.carrier + '"';
 					}
 
+					if(info.bogon){
+						output += '\nThis IP is a bogon / private IP that should not appear in public internet.'
+					}
+
 					self.say(target, output);
 				}
 			});
