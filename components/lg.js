@@ -10,7 +10,8 @@ var routers = {
 	ams: { addr: '67.17.81.187', longBGPOutput: true },
 	dar: { addr: '105.21.160.2', user: 'lg' },
 	mba: { addr: '105.21.0.2', user: 'lg' },
-	jnb: { addr: '105.22.32.2', user: 'lg' }
+	jnb: { addr: '105.22.32.2', user: 'lg' },
+	kul: '218.189.23.122'
 };
 
 var locations = {
@@ -23,7 +24,8 @@ var locations = {
 	ams: 'Amsterdam, NL',
 	dar: 'Dar es Salaam, TZ',
 	mba: 'Mombasa, KE',
-	jnb: 'Johannesberg, ZA'
+	jnb: 'Johannesberg, ZA',
+	kul: 'Kuala Lumpur, MY'
 };
 
 var connect = function(router, cmd, callback){
